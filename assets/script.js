@@ -56,23 +56,33 @@ choices.forEach((choice) => {
   choice.addEventListener("click", (e) => {
     const selectedChoice = e.target.innerHTML;
     let currentQuestion = codingQuestions[questionIndex];
-    // console.log(currentQuestion.answer);
-    if (selectedChoice === currentQuestion.answer) {
+    if (questionIndex === 4) {
+      window.location.href = "./endgame.html";
+    } else if (selectedChoice === currentQuestion.answer) {
+      document.getElementById("incorrect").textContent = "";
+      var incorrectChoice = document.createElement("h3");
+      incorrectChoice.textContent = "Correct!";
+      incorrectAnswer.appendChild(incorrectChoice);
       questionIndex++;
-      //   secondsLeft++
       getNewQuestion();
     } else {
       document.getElementById("incorrect").textContent = "";
-      var incorrectChoice = document.createElement("h6");
+      var incorrectChoice = document.createElement("h3");
       incorrectChoice.textContent = "Wrong!";
       incorrectAnswer.appendChild(incorrectChoice);
+      secondsLeft -= 10;
     }
 
-    // console.log(selectedChoice);
+    resetMessage();
   });
 });
 
-// generateQuizQuestion();
+function resetMessage() {
+  setTimeout(function (params) {
+    document.getElementById("incorrect").textContent = "";
+  }, 1000);
+}
+
 var timeEl = document.querySelector(".time");
 var mainEl = document.getElementById("main");
 
@@ -83,11 +93,16 @@ function setTime() {
     secondsLeft--;
     timeEl.textContent = secondsLeft;
 
-    if (secondsLeft === 0) {
-      clearInterval(timerInterval);
-      sendMessage();
-    }
+    endGame(timerInterval);
   }, 1000);
+}
+function endGame(timerInterval) {
+  if (secondsLeft <= 0) {
+    clearInterval(timerInterval);
+    sendMessage();
+    localStorage.currentScore = secondsLeft;
+    window.location.href = "./endgame.html";
+  }
 }
 
 setTime();
